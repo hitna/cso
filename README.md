@@ -10,6 +10,15 @@
 	#Bot User OAuth Access Token
 	BOT_TOKEN = "xoxb-xxxx-xxxx-xxxx"
 	```
+* slack APIでBOTに割り当てる権限
+	* chat:write
+	* users:read
+* slack APIでUSERに割り当てる権限
+	* channels:history
+	* channels:read
+	* groups:read
+	* im:read
+	* mpim:read
 ## 実行方法
 * pythonでmain.pyを実行してください。
 	```
