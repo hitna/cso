@@ -1,4 +1,5 @@
 import cso_class
+import sys, os
 from slack_sdk.errors import SlackApiError
 
 try:
@@ -20,5 +21,8 @@ except SlackApiError as e:
     print(f"Got an error: {e.response['error']}")
     
 except Exception as e:
-    print('Unknown exception!')
+    print('Unknown exception.')
     print(e)
+    exc_type, exc_obj, exc_tb = sys.exc_info()
+    fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+    print("{} {} line:{}".format(exc_type, fname, exc_tb.tb_lineno))

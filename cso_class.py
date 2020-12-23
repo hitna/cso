@@ -9,9 +9,11 @@ class CountStamp:
     enddatetime = None
     stamp_counter = {}
     user_counter = {}
+    recv_counter = {}
     client = None
     bot = None
     message = ""
+    chat_list = []
 
     # インストラクタ
     def __init__(self):
@@ -38,7 +40,7 @@ class CountStamp:
             #apiの呼び出し回数の制限（1分間に50回まで）を回避する
             time.sleep(1)
             history = self.client.conversations_history(channel=channel_id,oldest=self.startdatetime.timestamp(),latest=self.enddatetime.timestamp())
-            #スタンプをカウントする
+            #履歴内のスタンプをカウントする
             self.cntReactions(history=history,channel=channel)
 
     # 履歴内のスタンプをカウントする
@@ -48,13 +50,31 @@ class CountStamp:
         for message in history["messages"]:
             try:
                 if(message.get("reactions")):
+                    reactions_cnt = 0
                     for reaction in message["reactions"]:
+                        # ユーザー別のスタンプ数のカウント
                         self.cntUsers(users=reaction["users"])
+
+                        # スタンプ別のスタンプ数のカウント
                         key = reaction["name"]
                         if(self.stamp_counter.get(key)):
                             self.stamp_counter[key] = self.stamp_counter[key] + reaction["count"]
                         else:
                             self.stamp_counter[key] = reaction["count"]
+                        
+                        # スタンプを受け取ったユーザー別のスタンプ数のカウント
+                        if(message.get("user")):
+                            key = message["user"]
+                            if(self.recv_counter.get(key)):
+                                self.recv_counter[key] = self.recv_counter[key] + reaction["count"]
+                            else:
+                                self.recv_counter[key] = reaction["count"]
+
+                        # スレッドについたスタンプ数のカウント
+                        reactions_cnt = reactions_cnt + reaction["count"]
+
+                    # スレッド別のスタンプ数
+                    self.chat_list.append([channel['id'],message["ts"],reactions_cnt])
             except KeyError as e:
                 print("KeyError:")
                 print(e.args)
@@ -71,31 +91,43 @@ class CountStamp:
     def setMessage(self):
         sorted_stamp = sorted(self.stamp_counter.items(), key=lambda x:x[1], reverse=True)
         sorted_user = sorted(self.user_counter.items(), key=lambda x:x[1], reverse=True)
-
+        sorted_recv = sorted(self.recv_counter.items(), key=lambda x:x[1], reverse=True)
+        sorted_chat = sorted(self.chat_list, key=lambda x:x[2], reverse=True)
+  
         w_list = ['月', '火', '水', '木', '金', '土', '日']
         self.message = "{}({})のスタンプランキングTOP{}を発表します。\n".format(self.startdate.strftime('%Y年%m月%d日'),w_list[self.startdate.weekday()],const.RANK_LIMIT)
 
-        self.message = self.message + "\nこのスタンプが良く使われました:+1:\n"
-        self.message = self.setRanking(sorted_stamp,False)
+        self.message = self.message + "\n\n:+1:このスタンプが良く使われました:+1:\n"
+        self.setRankingMessage(sorted_stamp,False)
         
-        self.message = self.message + "\nこのユーザーがたくさんスタンプしました:tera_感謝_赤:\n"
-        self.message = self.setRanking(sorted_user,True)
+        self.message = self.message + "\n\n:tera_感謝_赤:このユーザーがたくさんスタンプしました:tera_感謝_赤:\n"
+        self.setRankingMessage(sorted_user,True)
+
+        self.message = self.message + "\n\n:gift:このユーザーがたくさんスタンプを受け取りました:gift:\n"
+        self.setRankingMessage(sorted_recv,True)
+
+        self.message = self.message + "\n\n:trophy:スタンプを集めたメッセージはこちら:trophy:\n"
+        self.setChatRankingMessage(sorted_chat)
 
         total_stamp = sum(self.stamp_counter.values())
-        self.message = self.message + "\nすべてのスタンプを合計すると {} でした！".format(total_stamp)
+        self.message = self.message + "\n\nすべてのスタンプを合計すると {} でした！".format(total_stamp)
         i = 1
         while i <=  int(total_stamp / const.CLAP_LOOP):
             self.message = self.message + ":clap:"
             i = i + 1
-        self.message = self.message + "\n"
-
-        self.message = self.message + "\nそれでは今日もたくさんスタンプしましょう！"
+        
+        today_weekday = datetime.date.today().weekday()
+        # 土日はメッセージを変える。
+        if(today_weekday != 5 and today_weekday != 6):
+            self.message = self.message + "\nそれでは今日もはりきってスタンプしましょう！"
+        else:
+            self.message = self.message + "\n休日対応おつかれさまです。"
 
     def postMessage(self):
         self.bot.chat_postMessage(channel=const.CHANNEL_NAME, text=self.message)
     
     #ランキング処理
-    def setRanking(self,rank_list,user_flag):
+    def setRankingMessage(self,rank_list,user_flag):
         rank = 1
         i = 0
         while i < len(rank_list):
@@ -119,8 +151,17 @@ class CountStamp:
             if(rank > const.RANK_LIMIT):
                 break
         self.message = self.message + '\n'
-        return self.message
     
+    #チャットのランク処理
+    def setChatRankingMessage(self,sorted_chat):
+        rank = 1
+        for chat in sorted_chat:
+            link = self.bot.chat_getPermalink(channel=chat[0], message_ts=chat[1])
+            self.message = self.message + link["permalink"] + '\n'
+            rank = rank + 1
+            if(rank > const.CHAT_RANK_LIMIT):
+                break
+           
     #ユーザーの表示名を取得する
     def getUsername(self,user_id):
         user_info = self.bot.users_info(user=user_id)
