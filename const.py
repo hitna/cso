@@ -3,7 +3,7 @@ import local
 #上位何位まで表示するか
 RANK_LIMIT = 10
 #取得するチャンネル数の上限（最大1000）
-CHANNEL_LIMIT = 10
+CHANNEL_LIMIT = local.CHANNEL_LIMIT
 #何日遡るか
 DAYS_AGO = 1
 #何日分取得するか
