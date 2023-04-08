@@ -122,14 +122,7 @@ class CountStamp:
         while i <=  int(total_stamp / const.CLAP_LOOP):
             self.message = self.message + ":clap:"
             i = i + 1
-        
-        today_weekday = datetime.date.today().weekday()
-        # 土日はメッセージを変える。
-        if(today_weekday != 5 and today_weekday != 6):
-            self.message = self.message + "\nそれでは今日もはりきってスタンプしましょう！"
-        else:
-            self.message = self.message + "\n休日対応おつかれさまです。"
-
+ 
     def postMessage(self):
         self.bot.chat_postMessage(channel=const.CHANNEL_NAME, text=self.message)
     
