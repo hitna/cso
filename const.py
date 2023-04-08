@@ -3,7 +3,7 @@ import local
 #上位何位まで表示するか
 RANK_LIMIT = 10
 #取得するチャンネル数の上限（最大1000）
-CHANNEL_LIMIT = 1000
+CHANNEL_LIMIT = 10
 #何日遡るか
 DAYS_AGO = 1
 #何日分取得するか
@@ -19,4 +19,5 @@ CHANNEL_NAME = local.CHANNEL_NAME
 USER_TOKEN = local.USER_TOKEN
 #Bot User OAuth Access Token
 BOT_TOKEN = local.BOT_TOKEN
-
+#EXCLUSION_CHANNEL
+EXCLUSION_CHANNEL = local.EXCLUSION_CHANNEL

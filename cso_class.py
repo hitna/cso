@@ -1,6 +1,7 @@
 import datetime
 import time
 import const
+import re
 from slack_sdk import WebClient
 
 class CountStamp:
@@ -15,7 +16,7 @@ class CountStamp:
     message = ""
     chat_list = []
 
-    # インストラクタ
+    # コンストラクタ
     def __init__(self):
         print("CountStamp Start")
         self.client = WebClient(const.USER_TOKEN)
@@ -47,6 +48,11 @@ class CountStamp:
     def cntReactions(self,history,channel):
         if(len(history['messages'])>0):
             print("channel_name:{} messages:{}".format(channel['name'],len(history['messages'])))
+        
+        if(re.findall(const.EXCLUSION_CHANNEL,channel['name'])):
+            print("{} is excluded.".format(channel['name']))
+            return
+
         for message in history["messages"]:
             try:
                 if(message.get("reactions")):
