@@ -12,6 +12,8 @@ DAYS_TERM = 1
 CLAP_LOOP = 100
 #チャットランクを上位
 CHAT_RANK_LIMIT = 3
+#何時までにするか
+DAYS_HOUR = 18
 
 #投稿先のチャンネル（アプリを参加させておく）
 CHANNEL_NAME = local.CHANNEL_NAME

@@ -24,6 +24,7 @@ class CountStamp:
         #Start of time
         self.startdate = datetime.date.today() - datetime.timedelta(days=const.DAYS_AGO)
         self.startdatetime = datetime.datetime.combine(self.startdate,datetime.time())
+        self.startdatetime = self.startdatetime + datetime.timedelta(hours=const.DAYS_HOUR)
         self.enddatetime = self.startdatetime + datetime.timedelta(days=const.DAYS_TERM)
         print("term:{}-{}".format(self.startdatetime,self.enddatetime))  
 
