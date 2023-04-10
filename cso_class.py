@@ -7,6 +7,7 @@ from slack_sdk import WebClient
 class CountStamp:
     startdate = None
     startdatetime = None
+    enddate = None
     enddatetime = None
     stamp_counter = {}
     user_counter = {}
@@ -23,6 +24,7 @@ class CountStamp:
         self.bot = WebClient(const.BOT_TOKEN)
         #Start of time
         self.startdate = datetime.date.today() - datetime.timedelta(days=const.DAYS_AGO)
+        self.enddate = datetime.date.today()
         self.startdatetime = datetime.datetime.combine(self.startdate,datetime.time())
         self.startdatetime = self.startdatetime + datetime.timedelta(hours=const.DAYS_HOUR)
         self.enddatetime = self.startdatetime + datetime.timedelta(days=const.DAYS_TERM)
@@ -47,8 +49,7 @@ class CountStamp:
 
     # 履歴内のスタンプをカウントする
     def cntReactions(self,history,channel):
-        if(len(history['messages'])>0):
-            print("channel_name:{} messages:{}".format(channel['name'],len(history['messages'])))
+        print("channel_name:{} messages:{}".format(channel['name'],len(history['messages'])))
         
         if(re.findall(const.EXCLUSION_CHANNEL,channel['name'])):
             print("{} is excluded.".format(channel['name']))
@@ -102,7 +103,7 @@ class CountStamp:
         sorted_chat = sorted(self.chat_list, key=lambda x:x[2], reverse=True)
   
         w_list = ['月', '火', '水', '木', '金', '土', '日']
-        self.message = "{}({})のスタンプランキングTOP{}を発表します。\n".format(self.startdate.strftime('%Y年%m月%d日'),w_list[self.startdate.weekday()],const.RANK_LIMIT)
+        self.message = "{}({})のスタンプランキングTOP{}を発表します。\n".format(self.enddate.strftime('%Y年%m月%d日'),w_list[self.enddate.weekday()],const.RANK_LIMIT)
 
         self.message = self.message + "\n\n:+1:このスタンプが良く使われました:+1:\n"
         self.setRankingMessage(sorted_stamp,False)
