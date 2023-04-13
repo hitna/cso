@@ -1,0 +1,8 @@
+# 投稿先のチャンネル名
+CHANNEL_NAME = "#random"
+
+# OAuth Access Token
+USER_TOKEN = "xoxp-xxxx-xxxx-xxxx-xxxx"
+ 
+# Bot User OAuth Access Token
+BOT_TOKEN = "xoxb-xxxx-xxxx-xxxx"
