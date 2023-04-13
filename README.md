@@ -1,8 +1,9 @@
 # slackのスタンプをカウントするアプリ
 ## 事前設定
-* main.pyと同じフォルダにlocal.pyを作成する
-* local.py内に定数を記述する
-	```
+* `local.py.sample` を同ディレクトリ内(main.pyが配置されているのと同じ場所)に `local.py` という名前でコピーする
+* `local.py` 内の定数を適用したい環境のものに変更する
+
+	```python
 	#投稿先のチャンネル名
 	CHANNEL_NAME = "#random"
 	#OAuth Access Token
@@ -10,6 +11,7 @@
 	#Bot User OAuth Access Token
 	BOT_TOKEN = "xoxb-xxxx-xxxx-xxxx"
 	```
+
 * slack APIでBOTに割り当てる権限
 	* chat:write
 	* users:read
@@ -20,12 +22,12 @@
 	* im:read
 	* mpim:read
 ## 実行方法
-* pythonでmain.pyを実行してください。
-	```
+* pythonで `main.py` を実行してください。
+	```bash
 	python main.py
 	```
 ## 投稿イメージ
-* 表示件数等の変更は、const.pyの数値を変更してください。
+* 表示件数等の変更は、 `const.py` の数値を変更してください。
 	```
 	2020年11月22日のスタンプランキングを発表します。
 	このスタンプが良く使われました:+1:
